@@ -6,7 +6,7 @@ import (
 )
 
 // Store is the central state management
-var Store redux.Store
+var Store *redux.Store
 
 // Init initializes the default state
 func Init() {
@@ -106,11 +106,11 @@ func Init() {
 	}
 	// TODO: add reducers later
 	reducers := []redux.Reducer{}
-	Store := redux.NewStore(state, reducers)
+	Store = redux.NewStore(state, reducers)
 }
 
-func getStationSlice(m map[string]simulation.Station) []Station {
-	result := []Station{}
+func getStationSlice(m map[string]simulation.Station) []simulation.Station {
+	result := []simulation.Station{}
 	for _, s := range m {
 		result = append(result, s)
 	}

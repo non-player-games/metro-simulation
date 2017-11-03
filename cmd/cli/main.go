@@ -5,13 +5,14 @@ import (
 	"sync"
 	"time"
 
+	"github.com/non-player-games/metro-simulation/store"
 	"github.com/non-player-games/metro-simulation/ticker"
 )
 
 var wg sync.WaitGroup
 
 func init() {
-	// TODO: create sample set of data
+	store.Init()
 }
 
 func main() {
