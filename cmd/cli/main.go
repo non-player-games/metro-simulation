@@ -10,6 +10,10 @@ import (
 
 var wg sync.WaitGroup
 
+func init() {
+	// TODO: create sample set of data
+}
+
 func main() {
 	duration := 5 * time.Second
 	// TODO: replace duration to 1*time.Minute
