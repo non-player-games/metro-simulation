@@ -1,5 +1,7 @@
 # Metro simulation
 
+[![GoDoc](https://godoc.org/github.com/non-player-games/metro-simulation?status.svg)](https://godoc.org/github.com/non-player-games/metro-simulation)[![Build Status](https://travis-ci.org/non-player-games/metro-simulation.svg?branch=master)](https://travis-ci.org/non-player-games/metro-simulation)
+
 Metro simulation in Go for data analytics problem.
 
 ## Get started
