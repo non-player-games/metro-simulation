@@ -8,8 +8,8 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/non-player-games/metro-simulation/store"
 	"github.com/non-player-games/metro-simulation/ticker"
+	"github.com/non-player-games/metro-simulation/web"
 	"github.com/rcliao/redux"
-	"github.com/rcliao/sql-unit-test/web"
 )
 
 func init() {
@@ -24,6 +24,7 @@ func main() {
 
 	r := mux.NewRouter()
 	r.HandleFunc("/hello", web.Hello()).Methods("GET")
+	r.HandleFunc("/api/v1/state", web.CurrentState()).Methods("GET")
 
 	log.Println("Running web server at port 8000")
 	http.ListenAndServe(":8000", r)
