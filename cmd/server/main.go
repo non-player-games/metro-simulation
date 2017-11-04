@@ -1,15 +1,16 @@
 package main
 
 import (
-	"sync"
+	"log"
+	"net/http"
 	"time"
 
+	"github.com/gorilla/mux"
 	"github.com/non-player-games/metro-simulation/store"
 	"github.com/non-player-games/metro-simulation/ticker"
 	"github.com/rcliao/redux"
+	"github.com/rcliao/sql-unit-test/web"
 )
-
-var wg sync.WaitGroup
 
 func init() {
 	store.Init()
@@ -21,9 +22,11 @@ func main() {
 	ticker := ticker.NewTicker(duration, simulationTick(store.Store))
 	ticker.Run()
 
-	// to continue processing until quit
-	wg.Add(1)
-	wg.Wait()
+	r := mux.NewRouter()
+	r.HandleFunc("/hello", web.Hello()).Methods("GET")
+
+	log.Println("Running web server at port 8000")
+	http.ListenAndServe(":8000", r)
 }
 
 func simulationTick(store *redux.Store) func(t time.Time) error {

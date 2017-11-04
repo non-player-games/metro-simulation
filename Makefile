@@ -7,7 +7,7 @@ GOGET=$(GOCMD) get
 BINARY_FOLDER=bin
 BINARY_NAME=simulation
 BINARY_UNIX=$(BINARY_NAME)_unix
-MAIN_FILE=cmd/cli/main.go
+MAIN_FILE=cmd/server/main.go
 
 all: clean install test build
 install:
