@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Metro Simulation</title>
+</head>
+<body>
+    <table>
+        <caption>Trains</caption>
+        <thead>
+            <tr>
+                <th>Current Station</th>
+                <th>On Line</th>
+                <th>Direction</th>
+                <th># Of Riders</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{ range $index, $element := .Trains }}
+            <tr>
+                <td>{{ $element.CurrentStation.Name }}</td>
+                <td>{{ $element.Line.Name }}</td>
+                <td>{{ $element.Direction }}</td>
+                <td>{{ len $element.Riders }}</td>
+            </tr>
+            {{ end }}
+        </tbody>
+    </table>
+
+    <table>
+        <caption>Stations</caption>
+        <thead>
+            <tr>
+                <th>Station ID</th>
+                <th>Station Name</th>
+                <th>Location</th>
+                <th># Of Riders</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{ range $index, $element := .Stations }}
+            <tr>
+                <td>{{ $element.ID }}</td>
+                <td>{{ $element.Name }}</td>
+                <td>{{ $element.Location }}</td>
+                <td>{{ len $element.Riders }}</td>
+            </tr>
+            {{ end }}
+        </tbody>
+    </table>
+
+    <table>
+        <caption>Lines</caption>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Stations</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{ range $index, $element := .Lines }}
+            <tr>
+                <td>{{ $element.Name }}</td>
+                <td>{{ $element.Stations }}</td>
+            </tr>
+            {{ end }}
+        </tbody>
+    </table>
+</body>
+</html>
