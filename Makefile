@@ -11,7 +11,7 @@ MAIN_FILE=cmd/cli/main.go
 
 all: install test build
 install:
-	$(GOBUILD) get -t ./...
+	$(GOGET) -t ./...
 build: 
 	$(GOBUILD) -o $(BINARY_FOLDER)/$(BINARY_NAME) -v $(MAIN_FILE)
 test: 
