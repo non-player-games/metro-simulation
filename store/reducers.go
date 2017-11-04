@@ -1,6 +1,9 @@
 package store
 
-import "github.com/rcliao/redux"
+import (
+	simulation "github.com/non-player-games/metro-simulation"
+	"github.com/rcliao/redux"
+)
 
 // RiderStationReducer simulates the rider showing up at station
 func RiderStationReducer(state redux.State, action redux.Action) redux.State {
@@ -12,7 +15,16 @@ func RiderStationReducer(state redux.State, action redux.Action) redux.State {
 // TrainStationReducer simulates running train in the same line
 func TrainStationReducer(state redux.State, action redux.Action) redux.State {
 	// for each train: move it to next location in the train line
-	return state
+	switch action.Type {
+	case "TRAIN_DEPARTURE":
+		trains := state["trains"].([]simulation.Train)
+		for i, train := range trains {
+			trains[i] = train.Departure()
+		}
+		return state
+	default:
+		return state
+	}
 }
 
 // RiderTrainReducer simulates rider deciding to hop on the train or not based on its destination
