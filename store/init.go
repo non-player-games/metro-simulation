@@ -133,6 +133,7 @@ func Init() {
 	reducers := []redux.Reducer{
 		RiderStationReducer,
 		TrainStationReducer,
+		RiderTrainReducer,
 	}
 	Store = redux.NewStore(state, reducers)
 	Store.Subscribe(func(s redux.State) {

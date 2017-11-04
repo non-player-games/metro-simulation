@@ -62,11 +62,6 @@ type Line struct {
 	Name     string
 }
 
-// Rider represents a single rider with its detination
-type Rider struct {
-	DestinationID int
-}
-
 // LineFilter apply filter fn to the lines
 func LineFilter(lines []Line, fn func(line Line) bool) []Line {
 	vsf := make([]Line, 0)
@@ -85,6 +80,22 @@ func CastLinesToInterfaces(lines []Line) []interface{} {
 		result[i] = deepcopy.Copy(line)
 	}
 	return result
+}
+
+// Rider represents a single rider with its detination
+type Rider struct {
+	DestinationID int
+}
+
+// RiderFilter applies filter function to a list of rider
+func RiderFilter(riders []Rider, fn func(rider Rider) bool) []Rider {
+	vsf := make([]Rider, 0)
+	for _, v := range riders {
+		if fn(v) {
+			vsf = append(vsf, v)
+		}
+	}
+	return vsf
 }
 
 // Train choo choo
