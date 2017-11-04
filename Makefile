@@ -9,7 +9,9 @@ BINARY_NAME=simulation
 BINARY_UNIX=$(BINARY_NAME)_unix
 MAIN_FILE=cmd/cli/main.go
 
-all: test build
+all: install test build
+install:
+	$(GOBUILD) get -t ./...
 build: 
 	$(GOBUILD) -o $(BINARY_FOLDER)/$(BINARY_NAME) -v $(MAIN_FILE)
 test: 
