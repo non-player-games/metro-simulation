@@ -64,7 +64,7 @@ func Init() {
 		},
 	}
 	state["stations"] = getStationSlice(stations)
-	state["lines"] = []simulation.Line{
+	lines := []simulation.Line{
 		simulation.Line{
 			Stations: []simulation.Station{
 				stations["MAPLE_STATION"],
@@ -104,6 +104,18 @@ func Init() {
 			Name:     "Banana",
 		},
 	}
+	state["lines"] = lines
+	// for each line assign a train on it
+	trains = []simulation.Train{}
+	for _, line := range lines {
+		trains = append(trains, simulation.Train{
+			CurrentStation: line.Stations[0],
+			Line:           line,
+			Riders:         []simulation.Rider{},
+			Direction:      true,
+		})
+	}
+	state["trains"] = trains
 	// TODO: add reducers later
 	reducers := []redux.Reducer{}
 	Store = redux.NewStore(state, reducers)
