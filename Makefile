@@ -9,7 +9,7 @@ BINARY_NAME=simulation
 BINARY_UNIX=$(BINARY_NAME)_unix
 MAIN_FILE=cmd/cli/main.go
 
-all: install test build
+all: clean install test build
 install:
 	$(GOGET) -t ./...
 build: 
@@ -20,8 +20,7 @@ clean:
 	$(GOCLEAN)
 	rm -f $(BINARY_FOLDER)/$(BINARY_NAME)
 	rm -f $(BINARY_FOLDER)/$(BINARY_UNIX)
-run:
-	$(GOBUILD) -o $(BINARY_FOLDER)/$(BINARY_NAME) -v $(MAIN_FILE)
+run: build
 	./$(BINARY_FOLDER)/$(BINARY_NAME)
 
 # Cross compilation
