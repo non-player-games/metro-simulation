@@ -14,7 +14,7 @@ install:
 	$(GOGET) -t ./...
 build: 
 	$(GOBUILD) -o $(BINARY_FOLDER)/$(BINARY_NAME) -v $(MAIN_FILE)
-test: 
+test: install
 	$(GOTEST) -v ./...
 clean: 
 	$(GOCLEAN)
