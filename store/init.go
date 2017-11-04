@@ -131,11 +131,12 @@ func Init() {
 	state["trains"] = trains
 	// TODO: add reducers later
 	reducers := []redux.Reducer{
+		RiderStationReducer,
 		TrainStationReducer,
 	}
 	Store = redux.NewStore(state, reducers)
 	Store.Subscribe(func(s redux.State) {
-		b, err := json.MarshalIndent(s["trains"], "", "  ")
+		b, err := json.MarshalIndent(s["stations"], "", "  ")
 		if err != nil {
 			fmt.Println("error:", err)
 		}

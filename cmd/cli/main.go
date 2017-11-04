@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"sync"
 	"time"
 
@@ -30,11 +29,7 @@ func main() {
 func simulationTick(store *redux.Store) func(t time.Time) error {
 	return func(t time.Time) error {
 		store.Dispatch(redux.Action{Type: "TRAIN_DEPARTURE"})
+		store.Dispatch(redux.Action{Type: "RIDER_SHOWS_UP_STATION"})
 		return nil
 	}
-}
-
-func testTicker(t time.Time) error {
-	fmt.Println("current tick", t)
-	return nil
 }

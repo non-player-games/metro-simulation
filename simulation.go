@@ -31,6 +31,17 @@ func EventSimulation(events []Event) interface{} {
 	return nil
 }
 
+// RandomItem returns a random item from the list
+func RandomItem(list []interface{}) interface{} {
+	ran := rand.Intn(len(list))
+	return list[ran]
+}
+
+/**
+IDEA: probably move the train related struct into `metro` package and keep
+simulation package purely for abstract simulation logic like EventSimulation
+*/
+
 // Location represents the geo location of the object
 type Location struct {
 	X int
@@ -53,7 +64,27 @@ type Line struct {
 
 // Rider represents a single rider with its detination
 type Rider struct {
-	Destination Station
+	DestinationID int
+}
+
+// LineFilter apply filter fn to the lines
+func LineFilter(lines []Line, fn func(line Line) bool) []Line {
+	vsf := make([]Line, 0)
+	for _, v := range lines {
+		if fn(v) {
+			vsf = append(vsf, v)
+		}
+	}
+	return vsf
+}
+
+// CastLinesToInterfaces casts the slice of lines to slice of interfaces
+func CastLinesToInterfaces(lines []Line) []interface{} {
+	result := make([]interface{}, len(lines))
+	for i, line := range lines {
+		result[i] = deepcopy.Copy(line)
+	}
+	return result
 }
 
 // Train choo choo
@@ -100,6 +131,36 @@ func (t Train) Departure() Train {
 	newTrainState.Direction = newDirection
 
 	return newTrainState
+}
+
+// CastStationsToInterfaces casts a slice of station to a slice of interfaces
+func CastStationsToInterfaces(stations []Station) []interface{} {
+	result := make([]interface{}, len(stations))
+	for i, station := range stations {
+		result[i] = deepcopy.Copy(station)
+	}
+	return result
+}
+
+// StationsFilter filter the station and return the stations that meets the filter Fn
+func StationsFilter(stations []Station, fn func(station Station) bool) []Station {
+	vsf := make([]Station, 0)
+	for _, v := range stations {
+		if fn(v) {
+			vsf = append(vsf, v)
+		}
+	}
+	return vsf
+}
+
+// StationsContains return boolean to indicate if any of the station meets the criteria of fn
+func StationsContains(stations []Station, fn func(station Station) bool) bool {
+	for _, v := range stations {
+		if fn(v) {
+			return true
+		}
+	}
+	return false
 }
 
 func reverse(stations []Station) []Station {
