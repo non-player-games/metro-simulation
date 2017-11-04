@@ -1,6 +1,35 @@
 package simulation
 
-import "github.com/mohae/deepcopy"
+import (
+	"math/rand"
+
+	"github.com/mohae/deepcopy"
+)
+
+// Event represents single event in discrete event based simulation
+type Event struct {
+	Chance int         // chance is used to indicate the weight of certain event happening
+	Value  interface{} // value is what event carries
+}
+
+// EventSimulation takes a list of events and randomly select a event to return its value
+func EventSimulation(events []Event) interface{} {
+	total := 0
+	copyOfEvents := make([]Event, len(events))
+	for i, event := range events {
+		total = total + event.Chance
+		copyOfEvent := deepcopy.Copy(event).(Event)
+		copyOfEvent.Chance = total
+		copyOfEvents[i] = copyOfEvent
+	}
+	randomValue := rand.Intn(total)
+	for _, event := range copyOfEvents {
+		if randomValue < event.Chance {
+			return event.Value
+		}
+	}
+	return nil
+}
 
 // Location represents the geo location of the object
 type Location struct {
@@ -63,7 +92,7 @@ func (t Train) GetNextStation() Station {
 // Departure moves train to its next station
 func (t Train) Departure() Train {
 	newTrainState := deepcopy.Copy(t).(Train)
-	newDirection := false
+	newDirection := newTrainState.Direction
 	if len(t.GetDestinations()) == 1 {
 		newDirection = !newTrainState.Direction
 	}

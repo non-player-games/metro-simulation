@@ -98,7 +98,6 @@ func Init() {
 		simulation.Line{
 			Stations: []simulation.Station{
 				stations["MAPLE_STATION"],
-				stations["REDWOOD_STATION"],
 				stations["OAK_STATION"],
 				stations["ASH_STATION"],
 				stations["PINE_STATION"],
