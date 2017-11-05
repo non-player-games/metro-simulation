@@ -1,10 +1,6 @@
 package store
 
 import (
-	"encoding/json"
-	"fmt"
-	"log"
-
 	simulation "github.com/non-player-games/metro-simulation"
 	"github.com/rcliao/redux"
 )
@@ -136,13 +132,13 @@ func Init(dao simulation.EventDAO) {
 		RiderTrainReducer(dao),
 	}
 	Store = redux.NewStore(state, reducers)
-	Store.Subscribe(func(s redux.State) {
-		b, err := json.MarshalIndent(s["stations"], "", "  ")
-		if err != nil {
-			fmt.Println("error:", err)
-		}
-		log.Println("Current state", string(b))
-	})
+	// Store.Subscribe(func(s redux.State) {
+	// 	b, err := json.MarshalIndent(s["stations"], "", "  ")
+	// 	if err != nil {
+	// 		fmt.Println("error:", err)
+	// 	}
+	// 	log.Println("Current state", string(b))
+	// })
 }
 
 func getStationSlice(m map[string]simulation.Station) []simulation.Station {

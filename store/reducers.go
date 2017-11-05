@@ -55,6 +55,7 @@ func RiderStationReducer(dao simulation.EventDAO) redux.Reducer {
 					}
 				}
 			}
+			state["stations"] = stations
 			return state
 		default:
 			return state
