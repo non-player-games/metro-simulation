@@ -33,10 +33,10 @@ func main() {
 	ticker.Run()
 
 	r := mux.NewRouter()
-	r.PathPrefix("/").Handler(web.Index())
+	r.PathPrefix("/assets").Handler(web.Assets())
 	r.HandleFunc("/hello", web.Hello()).Methods("GET")
 	r.HandleFunc("/api/v1/state", web.CurrentState()).Methods("GET")
-	r.PathPrefix("/assets").Handler(web.Assets())
+	r.PathPrefix("/").Handler(web.Index())
 
 	log.Println("Running web server at port 8000")
 	http.ListenAndServe(":8000", r)

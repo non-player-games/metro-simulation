@@ -48,7 +48,7 @@ func Init(dao simulation.EventDAO) {
 			ID:       5,
 			Riders:   []simulation.Rider{},
 		},
-		"Redwood Station": simulation.Station{
+		"REDWOOD_STATION": simulation.Station{
 			Location: simulation.Location{X: 2, Y: 6},
 			Name:     "Redwood Station",
 			ID:       6,
@@ -94,6 +94,7 @@ func Init(dao simulation.EventDAO) {
 		simulation.Line{
 			Stations: []simulation.Station{
 				stations["MAPLE_STATION"],
+				stations["REDWOOD_STATION"],
 				stations["OAK_STATION"],
 				stations["ASH_STATION"],
 				stations["PINE_STATION"],
@@ -125,7 +126,6 @@ func Init(dao simulation.EventDAO) {
 		})
 	}
 	state["trains"] = trains
-	// TODO: add reducers later
 	reducers := []redux.Reducer{
 		RiderStationReducer(dao),
 		TrainStationReducer,
