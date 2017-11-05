@@ -9,11 +9,11 @@
     var maxY = 8;
     var stationRadius = 10;
     var lineColors = {
-        'Tomato': 'red',
-        'Avocado': 'green',
-        'Blueberry': 'blue',
-        'Orange': 'orange',
-        'Banana': 'yellow'
+        'Tomato': '#F44336',
+        'Avocado': '#4CAF50',
+        'Blueberry': '#03A9F4',
+        'Orange': '#FF9800',
+        'Banana': '#FDD835'
     };
 
     function getXScale(x) {

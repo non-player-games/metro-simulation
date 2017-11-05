@@ -18,6 +18,7 @@ func (m *MySQLEventDAO) StoreRiderEvent(action, stationName, lineName string) er
 	if err != nil {
 		return err
 	}
+	defer stmt.Close()
 	_, err = stmt.Exec(action, stationName, lineName)
 	if err != nil {
 		return err
