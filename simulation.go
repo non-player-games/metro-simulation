@@ -42,6 +42,11 @@ IDEA: probably move the train related struct into `metro` package and keep
 simulation package purely for abstract simulation logic like EventSimulation
 */
 
+// EventDAO is to define the serialization interface
+type EventDAO interface {
+	StoreRiderEvent(action, stationName, lineName string) error
+}
+
 // Location represents the geo location of the object
 type Location struct {
 	X int

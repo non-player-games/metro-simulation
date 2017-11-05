@@ -9,7 +9,18 @@ Metro simulation in Go for data analytics problem.
 ### Dependencies
 
 * Install [Go](https://golang.org/)
+* Install MySQL
 
 ### Start command
+
+Before starting running the application, you will need to run through ddl defined
+as `schema.sql`.
+
+Please create a database called `metro` for starting point and run the create
+table script like below:
+
+```
+mysql -u root metro < schema.sql
+```
 
 This repo uses the Makerfile to group commands. To get started, run `make run`

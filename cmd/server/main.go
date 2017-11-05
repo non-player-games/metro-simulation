@@ -1,19 +1,29 @@
 package main
 
 import (
+	"database/sql"
+	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/gorilla/mux"
+	"github.com/non-player-games/metro-simulation/dao"
 	"github.com/non-player-games/metro-simulation/store"
 	"github.com/non-player-games/metro-simulation/ticker"
 	"github.com/non-player-games/metro-simulation/web"
 	"github.com/rcliao/redux"
+
+	_ "github.com/go-sql-driver/mysql"
 )
 
+var db *sql.DB
+
 func init() {
-	store.Init()
+	db = getDB()
+	mysqlDAO := dao.NewMySQLEventDAO(db)
+	store.Init(mysqlDAO)
 }
 
 func main() {
@@ -40,4 +50,39 @@ func simulationTick(store *redux.Store) func(t time.Time) error {
 		store.Dispatch(redux.Action{Type: "RIDER_ARRIVAL_TRAIN"})
 		return nil
 	}
+}
+
+func getDB() *sql.DB {
+	defaultProtocol := "tcp"
+	defaultPort := "3306"
+	username := os.Getenv("MYSQL_USERNAME")
+	if username == "" {
+		username = "root"
+	}
+	host := os.Getenv("MYSQL_HOST")
+	if host == "" {
+		host = "localhost"
+	}
+	password := os.Getenv("MYSQL_PASSWORD")
+	database := os.Getenv("MYSQL_DATABASE")
+	if database == "" {
+		database = "metro"
+	}
+
+	sqlDSN := fmt.Sprintf(
+		"%s:%s@%s(%s:%s)/%s",
+		username,
+		password,
+		defaultProtocol,
+		host,
+		defaultPort,
+		database,
+	)
+
+	db, err := sql.Open("mysql", sqlDSN)
+	if err != nil {
+		panic(err)
+	}
+
+	return db
 }

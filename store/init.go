@@ -13,7 +13,7 @@ import (
 var Store *redux.Store
 
 // Init initializes the default state
-func Init() {
+func Init(dao simulation.EventDAO) {
 	state := make(map[string]interface{})
 	stations := map[string]simulation.Station{
 		"MAPLE_STATION": simulation.Station{
@@ -131,9 +131,9 @@ func Init() {
 	state["trains"] = trains
 	// TODO: add reducers later
 	reducers := []redux.Reducer{
-		RiderStationReducer,
+		RiderStationReducer(dao),
 		TrainStationReducer,
-		RiderTrainReducer,
+		RiderTrainReducer(dao),
 	}
 	Store = redux.NewStore(state, reducers)
 	Store.Subscribe(func(s redux.State) {
