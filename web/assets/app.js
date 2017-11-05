@@ -49,7 +49,7 @@
         state.trains.forEach(function(train) {
             var x = train.CurrentStation.Location.X;
             var y = train.CurrentStation.Location.Y;
-            drawRect(ctx, getXScale(x), getYScale(y), 10, 10, lineColors[train.Line.Name], 'Train (' + train.Riders.length + ')');
+            drawRect(ctx, getXScale(x), getYScale(y), 10, 15, lineColors[train.Line.Name], 'Train (' + train.Riders.length + ')');
         });
     }
 
@@ -71,7 +71,7 @@
         ctx.lineWidth = 1;
         ctx.strokeStyle = borderColor;
         ctx.stroke();
-        ctx.font = '12px Fira Code';
+        ctx.font = '12px sans-serif';
         ctx.fillStyle = 'black';
         ctx.fillText(label, x + radius + 5, y + radius + 5);
     }
@@ -85,7 +85,7 @@
         ctx.strokeRect(x, y, w, h);
         ctx.fillStyle = color;
         ctx.strokeStyle = 'black';
-        ctx.font = 'bold 16px Fira Code';
+        ctx.font = 'bold 16px sans-serif';
         ctx.fillText(label, x, y - 20);
         ctx.strokeText(label, x, y, - 20);
     }

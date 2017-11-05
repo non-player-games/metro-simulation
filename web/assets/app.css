@@ -1,6 +1,11 @@
 html, body {
     font-size: 16px;
-    font-family: 'Fira Mono';
+    font-family: 'Montserrat', sans-serif;
+}
+
+h1, h2, h3 {
+    font-family: 'Acme', sans-serif;
+    text-align: center;
 }
 
 main {
@@ -10,4 +15,21 @@ main {
     margin: 0 auto;
 }
 
+.tables {
+    display: flex;
+    justify-content: space-around;
+}
 
+.map {
+    display: flex;
+    justify-content: center;
+}
+
+table caption {
+    font-size: 2em;
+    font-family: 'Acme', sans-serif;
+}
+
+table th {
+    font-weight: bold;
+}

@@ -4,73 +4,54 @@
     <meta charset="UTF-8">
     <title>Metro Simulation</title>
 
+    <link href="https://fonts.googleapis.com/css?family=Acme|Montserrat:200i,400,700" rel="stylesheet">
     <link rel="stylesheet" href="/assets/app.css">
 </head>
 <body>
     <main>
     <section class="info">
         <h2>Information</h2>
-        <table>
-            <caption>Trains</caption>
-            <thead>
-                <tr>
-                    <th>Current Station</th>
-                    <th>On Line</th>
-                    <th>Direction</th>
-                    <th># Of Riders</th>
-                </tr>
-            </thead>
-            <tbody>
-                {{ range $index, $element := .Trains }}
-                <tr>
-                    <td>{{ $element.CurrentStation.Name }}</td>
-                    <td>{{ $element.Line.Name }}</td>
-                    <td>{{ $element.Direction }}</td>
-                    <td>{{ len $element.Riders }}</td>
-                </tr>
-                {{ end }}
-            </tbody>
-        </table>
+        <div class="tables">
+            <table>
+                <caption>Trains</caption>
+                <thead>
+                    <tr>
+                        <th>Current Station</th>
+                        <th>On Line</th>
+                        <th># Of Riders</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{ range $index, $element := .Trains }}
+                    <tr>
+                        <td>{{ $element.CurrentStation.Name }}</td>
+                        <td>{{ $element.Line.Name }}</td>
+                        <td>{{ len $element.Riders }}</td>
+                    </tr>
+                    {{ end }}
+                </tbody>
+            </table>
 
-        <table>
-            <caption>Stations</caption>
-            <thead>
-                <tr>
-                    <th>Station ID</th>
-                    <th>Station Name</th>
-                    <th>Location</th>
-                    <th># Of Riders</th>
-                </tr>
-            </thead>
-            <tbody>
-                {{ range $index, $element := .Stations }}
-                <tr>
-                    <td>{{ $element.ID }}</td>
-                    <td>{{ $element.Name }}</td>
-                    <td>{{ $element.Location }}</td>
-                    <td>{{ len $element.Riders }}</td>
-                </tr>
-                {{ end }}
-            </tbody>
-        </table>
-
-        <table>
-            <caption>Lines</caption>
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Stations</th>
-                </tr>
-            </thead>
-            <tbody>
-                {{ range $index, $element := .Lines }}
-                <tr>
-                    <td>{{ $element.Name }}</td>
-                    <td>{{ $element.Stations }}</td>
-                </tr>
-                {{ end }}
-            </tbody>
-        </table>
+            <table>
+                <caption>Stations</caption>
+                <thead>
+                    <tr>
+                        <th>Station ID</th>
+                        <th>Station Name</th>
+                        <th># Of Riders</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{ range $index, $element := .Stations }}
+                    <tr>
+                        <td>{{ $element.ID }}</td>
+                        <td>{{ $element.Name }}</td>
+                        <td>{{ len $element.Riders }}</td>
+                    </tr>
+                    {{ end }}
+                </tbody>
+            </table>
+        </div>
     </section>
     <section class="map">
         <canvas id="metro_map" width="1024" height="768"></canvas>
