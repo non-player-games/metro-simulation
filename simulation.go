@@ -47,6 +47,13 @@ type EventDAO interface {
 	StoreRiderEvent(action, stationName, lineName string) error
 }
 
+// State represents current application state
+type State struct {
+	Trains   []Train   `json:"trains"`
+	Stations []Station `json:"stations"`
+	Lines    []Line    `json:"lines"`
+}
+
 // Location represents the geo location of the object
 type Location struct {
 	X int

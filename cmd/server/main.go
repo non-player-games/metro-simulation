@@ -48,6 +48,7 @@ func simulationTick(store *redux.Store) func(t time.Time) error {
 		store.Dispatch(redux.Action{Type: "RIDER_SHOWS_UP_STATION"})
 		store.Dispatch(redux.Action{Type: "RIDER_DEPARTURE_TRAIN"})
 		store.Dispatch(redux.Action{Type: "RIDER_ARRIVAL_TRAIN"})
+		store.Dispatch(redux.Action{Type: "PERSIST_STATE"})
 		return nil
 	}
 }

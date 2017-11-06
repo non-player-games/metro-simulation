@@ -1,6 +1,8 @@
 package store
 
 import (
+	"encoding/json"
+	"io/ioutil"
 	"log"
 	"math/rand"
 
@@ -147,5 +149,25 @@ func RiderTrainReducer(dao simulation.EventDAO) redux.Reducer {
 		default:
 			return state
 		}
+	}
+}
+
+// PersistStateReducer take the state and store into JSON
+func PersistStateReducer(state redux.State, action redux.Action) redux.State {
+	switch action.Type {
+	case "PERSIST_STATE":
+		currentState := simulation.State{
+			Trains:   state["trains"].([]simulation.Train),
+			Stations: state["stations"].([]simulation.Station),
+			Lines:    state["lines"].([]simulation.Line),
+		}
+		stateJSON, _ := json.Marshal(currentState)
+		err := ioutil.WriteFile("state.json", stateJSON, 0644)
+		if err != nil {
+			log.Println("failed to write state to json")
+		}
+		return state
+	default:
+		return state
 	}
 }
