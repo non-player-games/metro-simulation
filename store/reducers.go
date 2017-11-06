@@ -88,12 +88,18 @@ func RiderTrainReducer(dao simulation.EventDAO) redux.Reducer {
 			trains := state["trains"].([]simulation.Train)
 			stations := state["stations"].([]simulation.Station)
 			for i, train := range trains {
+				if len(train.Riders) >= train.Capacity {
+					continue
+				}
 				for j, station := range stations {
 					if train.CurrentStation.ID == station.ID {
 						onboardingRiders := []simulation.Rider{}
 						for _, rider := range station.Riders {
 							for _, destination := range train.GetDestinations() {
 								if destination.ID == rider.DestinationID {
+									if len(train.Riders)+len(onboardingRiders) >= train.Capacity {
+										continue
+									}
 									onboardingRiders = append(onboardingRiders, rider)
 									if err := dao.StoreRiderEvent("ARRIVAL_TRAIN", station.Name, train.Line.Name); err != nil {
 										log.Println("failed to insert arrival train event", err)

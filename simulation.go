@@ -108,6 +108,7 @@ type Train struct {
 	CurrentStation Station
 	Line           Line
 	Riders         []Rider
+	Capacity       int
 	Direction      bool // indicates either going backward or forward
 }
 

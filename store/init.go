@@ -122,6 +122,7 @@ func Init(dao simulation.EventDAO) {
 			CurrentStation: line.Stations[0],
 			Line:           line,
 			Riders:         []simulation.Rider{},
+			Capacity:       10,
 			Direction:      true,
 		})
 	}
@@ -132,13 +133,6 @@ func Init(dao simulation.EventDAO) {
 		RiderTrainReducer(dao),
 	}
 	Store = redux.NewStore(state, reducers)
-	// Store.Subscribe(func(s redux.State) {
-	// 	b, err := json.MarshalIndent(s["stations"], "", "  ")
-	// 	if err != nil {
-	// 		fmt.Println("error:", err)
-	// 	}
-	// 	log.Println("Current state", string(b))
-	// })
 }
 
 func getStationSlice(m map[string]simulation.Station) []simulation.Station {
