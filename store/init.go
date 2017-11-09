@@ -1,10 +1,6 @@
 package store
 
 import (
-	"encoding/json"
-	"fmt"
-	"io/ioutil"
-
 	simulation "github.com/non-player-games/metro-simulation"
 	"github.com/rcliao/redux"
 )
@@ -13,21 +9,13 @@ import (
 var Store *redux.Store
 
 // Init initializes the default state
-func Init(dao simulation.EventDAO) {
-	// read state.json if it exist and use it as initial state
-	file, e := ioutil.ReadFile("state.json")
-	if e != nil {
-		fmt.Printf("cannot read json file. Assume state doesn't exist. %v\n", e)
-	}
-
+func Init(dao simulation.EventDAO, initState simulation.State) {
 	state := make(map[string]interface{})
-	var currentState simulation.State
-	json.Unmarshal(file, &currentState)
 
-	if len(currentState.Stations) != 0 {
-		state["trains"] = currentState.Trains
-		state["stations"] = currentState.Stations
-		state["lines"] = currentState.Lines
+	if len(initState.Stations) != 0 {
+		state["trains"] = initState.Trains
+		state["stations"] = initState.Stations
+		state["lines"] = initState.Lines
 	} else {
 		stations := map[string]simulation.Station{
 			"MAPLE_STATION": simulation.Station{

@@ -6,7 +6,6 @@ import (
 	"log"
 	"math/rand"
 
-	"github.com/mohae/deepcopy"
 	simulation "github.com/non-player-games/metro-simulation"
 	"github.com/rcliao/redux"
 )
@@ -18,9 +17,10 @@ func RiderStationReducer(dao simulation.EventDAO) redux.Reducer {
 	return func(state redux.State, action redux.Action) redux.State {
 		switch action.Type {
 		case "RIDER_SHOWS_UP_STATION":
-			stations := deepcopy.Copy(state["stations"]).([]simulation.Station)
-			// 1. generate a list of riders with their expected destination
+			stations := state["stations"].([]simulation.Station)
+			// 1. generate a list of riders on a station
 			newRiders := []simulation.Rider{}
+			// TODO: generate number of riders based on time
 			numOfRidersGenerated := rand.Intn(maxNumOfRidersGenerated)
 			for i := 0; i < numOfRidersGenerated; i++ {
 				newRiders = append(
@@ -30,7 +30,7 @@ func RiderStationReducer(dao simulation.EventDAO) redux.Reducer {
 					},
 				)
 			}
-			// 2. Based on destination, we will put rider into a random station in the same line
+			// 2. Based on station, we will give this rider into a random destination in the same line
 			lines := state["lines"].([]simulation.Line)
 			for _, rider := range newRiders {
 				linesRidersCanBe := simulation.LineFilter(lines, func(line simulation.Line) bool {
@@ -57,7 +57,6 @@ func RiderStationReducer(dao simulation.EventDAO) redux.Reducer {
 					}
 				}
 			}
-			state["stations"] = stations
 			return state
 		default:
 			return state

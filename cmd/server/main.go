@@ -2,13 +2,16 @@ package main
 
 import (
 	"database/sql"
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
 	"time"
 
 	"github.com/gorilla/mux"
+	simulation "github.com/non-player-games/metro-simulation"
 	"github.com/non-player-games/metro-simulation/dao"
 	"github.com/non-player-games/metro-simulation/store"
 	"github.com/non-player-games/metro-simulation/ticker"
@@ -19,11 +22,21 @@ import (
 )
 
 var db *sql.DB
+var logicalTime int64
 
 func init() {
 	db = getDB()
 	mysqlDAO := dao.NewMySQLEventDAO(db)
-	store.Init(mysqlDAO)
+
+	// read state.json if it exist and use it as initial state
+	file, e := ioutil.ReadFile("state.json")
+	if e != nil {
+		fmt.Printf("cannot read json file. Assume state doesn't exist. %v\n", e)
+	}
+	var initState simulation.State
+	json.Unmarshal(file, &initState)
+	logicalTime = initState.Counter
+	store.Init(mysqlDAO, initState)
 }
 
 func main() {
@@ -44,10 +57,11 @@ func main() {
 
 func simulationTick(store *redux.Store) func(t time.Time) error {
 	return func(t time.Time) error {
-		store.Dispatch(redux.Action{Type: "TRAIN_DEPARTURE"})
-		store.Dispatch(redux.Action{Type: "RIDER_SHOWS_UP_STATION"})
-		store.Dispatch(redux.Action{Type: "RIDER_DEPARTURE_TRAIN"})
-		store.Dispatch(redux.Action{Type: "RIDER_ARRIVAL_TRAIN"})
+		logicalTime++
+		store.Dispatch(redux.Action{Type: "TRAIN_DEPARTURE", Value: logicalTime})
+		store.Dispatch(redux.Action{Type: "RIDER_SHOWS_UP_STATION", Value: logicalTime})
+		store.Dispatch(redux.Action{Type: "RIDER_DEPARTURE_TRAIN", Value: logicalTime})
+		store.Dispatch(redux.Action{Type: "RIDER_ARRIVAL_TRAIN", Value: logicalTime})
 		store.Dispatch(redux.Action{Type: "PERSIST_STATE"})
 		return nil
 	}
