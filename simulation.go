@@ -49,6 +49,7 @@ type EventDAO interface {
 
 // State represents current application state
 type State struct {
+	Counter  int64     `json:"counter"`
 	Trains   []Train   `json:"trains"`
 	Stations []Station `json:"stations"`
 	Lines    []Line    `json:"lines"`
