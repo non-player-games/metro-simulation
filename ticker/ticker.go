@@ -5,6 +5,8 @@ import (
 	"time"
 )
 
+var LogicalTime = 0
+
 // TickFn defines what needs to be run
 type TickFn func(t time.Time) error
 
@@ -30,6 +32,7 @@ func NewTicker(duration time.Duration, tickerFn TickFn) Ticker {
 func (t Ticker) Run() {
 	go func() {
 		for ct := range t.Ticker.C {
+            LogicalTime++
 			if err := t.TickerFn(ct); err != nil {
 				// TODO: think of a way to do better error handling e.g. fails
 				// the whole loop after certain times and report to caller
