@@ -1,6 +1,8 @@
 package store
 
 import (
+	"time"
+
 	simulation "github.com/non-player-games/metro-simulation"
 	"github.com/rcliao/redux"
 )
@@ -13,6 +15,8 @@ func Init(dao simulation.EventDAO, initState simulation.State) {
 	state := make(map[string]interface{})
 
 	if len(initState.Stations) != 0 {
+		state["counter"] = initState.Counter
+		state["time"] = initState.ActualTime
 		state["trains"] = initState.Trains
 		state["stations"] = initState.Stations
 		state["lines"] = initState.Lines
@@ -137,6 +141,8 @@ func Init(dao simulation.EventDAO, initState simulation.State) {
 			})
 		}
 		state["trains"] = trains
+		state["counter"] = 0
+		state["time"] = time.Date(2017, time.January, 1, 0, 0, 0, 0, time.Local)
 	}
 
 	reducers := []redux.Reducer{

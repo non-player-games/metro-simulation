@@ -66,7 +66,7 @@ func simulationTick(store *redux.Store) func(t time.Time) error {
 		store.Dispatch(redux.Action{Type: "RIDER_SHOWS_UP_STATION", Value: logicalTime})
 		store.Dispatch(redux.Action{Type: "RIDER_DEPARTURE_TRAIN", Value: logicalTime})
 		store.Dispatch(redux.Action{Type: "RIDER_ARRIVAL_TRAIN", Value: logicalTime})
-		store.Dispatch(redux.Action{Type: "PERSIST_STATE"})
+		store.Dispatch(redux.Action{Type: "PERSIST_STATE", Value: logicalTime})
 		return nil
 	}
 }

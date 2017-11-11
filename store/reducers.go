@@ -112,7 +112,7 @@ func RiderStationReducer(dao simulation.EventDAO) redux.Reducer {
 						if stations[i].ID == stationID {
 							stations[i].Riders = append(stations[i].Riders, rider)
 							log.Println("rider shows up at station", rider, stations[i])
-							if err := dao.StoreRiderEvent("ARRIVAL_STATION", stations[i].Name, lineToSendRiderTo.Name); err != nil {
+							if err := dao.StoreRiderEvent("ARRIVAL_STATION", stations[i].Name, lineToSendRiderTo.Name, simulatedTime); err != nil {
 								log.Println("has issue updating rider event", err)
 							}
 							break
@@ -149,6 +149,8 @@ func RiderTrainReducer(dao simulation.EventDAO) redux.Reducer {
 		// for each rider in the station with a train, decide if rider want to hop on the train
 		switch action.Type {
 		case "RIDER_ARRIVAL_TRAIN":
+			logicalTime := action.Value.(int64)
+			simulatedTime := logicalTimeToRealTime(initialActualTime, actualDuration, logicalTime)
 			trains := state["trains"].([]simulation.Train)
 			stations := state["stations"].([]simulation.Station)
 			for i, train := range trains {
@@ -162,10 +164,13 @@ func RiderTrainReducer(dao simulation.EventDAO) redux.Reducer {
 							for _, destination := range train.GetDestinations() {
 								if destination.ID == rider.DestinationID {
 									if len(train.Riders)+len(onboardingRiders) >= train.Capacity {
+										if err := dao.StoreRiderEvent("TRAIN_FULL", station.Name, train.Line.Name, simulatedTime); err != nil {
+											log.Println("failed to insert train full event", err)
+										}
 										continue
 									}
 									onboardingRiders = append(onboardingRiders, rider)
-									if err := dao.StoreRiderEvent("ARRIVAL_TRAIN", station.Name, train.Line.Name); err != nil {
+									if err := dao.StoreRiderEvent("ARRIVAL_TRAIN", station.Name, train.Line.Name, simulatedTime); err != nil {
 										log.Println("failed to insert arrival train event", err)
 									}
 								}
@@ -190,10 +195,12 @@ func RiderTrainReducer(dao simulation.EventDAO) redux.Reducer {
 			}
 			return state
 		case "RIDER_DEPARTURE_TRAIN":
+			logicalTime := action.Value.(int64)
+			simulatedTime := logicalTimeToRealTime(initialActualTime, actualDuration, logicalTime)
 			trains := state["trains"].([]simulation.Train)
 			for i := range trains {
 				for _ = range trains[i].Riders {
-					if err := dao.StoreRiderEvent("DEPARTURE_TRAIN", trains[i].CurrentStation.Name, trains[i].Line.Name); err != nil {
+					if err := dao.StoreRiderEvent("DEPARTURE_TRAIN", trains[i].CurrentStation.Name, trains[i].Line.Name, simulatedTime); err != nil {
 						log.Println("failed to insert departure train event", err)
 					}
 				}
@@ -218,10 +225,16 @@ func RiderTrainReducer(dao simulation.EventDAO) redux.Reducer {
 func PersistStateReducer(state redux.State, action redux.Action) redux.State {
 	switch action.Type {
 	case "PERSIST_STATE":
+		logicalTime := action.Value.(int64)
+		actualTime := logicalTimeToRealTime(initialActualTime, actualDuration, logicalTime)
+		state["counter"] = logicalTime
+		state["time"] = actualTime
 		currentState := simulation.State{
-			Trains:   state["trains"].([]simulation.Train),
-			Stations: state["stations"].([]simulation.Station),
-			Lines:    state["lines"].([]simulation.Line),
+			Counter:    logicalTime,
+			ActualTime: actualTime,
+			Trains:     state["trains"].([]simulation.Train),
+			Stations:   state["stations"].([]simulation.Station),
+			Lines:      state["lines"].([]simulation.Line),
 		}
 		stateJSON, _ := json.Marshal(currentState)
 		err := ioutil.WriteFile("state.json", stateJSON, 0644)

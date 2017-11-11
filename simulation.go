@@ -45,7 +45,7 @@ simulation package purely for abstract simulation logic like EventSimulation
 
 // EventDAO is to define the serialization interface
 type EventDAO interface {
-	StoreRiderEvent(action, stationName, lineName string) error
+	StoreRiderEvent(action, stationName, lineName string, actualTime time.Time) error
 }
 
 // State represents current application state
