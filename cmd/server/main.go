@@ -43,7 +43,7 @@ func init() {
 
 func main() {
 	duration := 5 * time.Second
-	if os.Getenv("ENVIRONEMNT") == "production" {
+	if os.Getenv("ENVIRONMENT") == "production" {
 		duration = 1 * time.Minute
 	}
 	ticker := ticker.NewTicker(duration, simulationTick(store.Store))
