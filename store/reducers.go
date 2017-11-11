@@ -5,12 +5,74 @@ import (
 	"io/ioutil"
 	"log"
 	"math/rand"
+	"time"
 
 	simulation "github.com/non-player-games/metro-simulation"
 	"github.com/rcliao/redux"
 )
 
-var maxNumOfRidersGenerated = 100
+var initialActualTime = time.Date(2017, time.January, 1, 0, 0, 0, 0, time.Local)
+var actualDuration = time.Hour
+var hourToRidersMapping = map[int]int{
+	0:  20,
+	1:  30,
+	2:  20,
+	3:  20,
+	4:  30,
+	5:  40,
+	6:  90,
+	7:  130,
+	8:  200,
+	9:  700,
+	10: 300,
+	11: 350,
+	12: 500,
+	13: 550,
+	14: 330,
+	15: 430,
+	16: 530,
+	17: 630,
+	18: 430,
+	19: 330,
+	20: 150,
+	21: 50,
+	22: 40,
+	23: 30,
+}
+var stationIDsPercentage = []simulation.Event{
+	simulation.Event{
+		Chance: 5,
+		Value:  0,
+	},
+	simulation.Event{
+		Chance: 30,
+		Value:  1,
+	}, simulation.Event{
+		Chance: 30,
+		Value:  2,
+	}, simulation.Event{
+		Chance: 10,
+		Value:  3,
+	}, simulation.Event{
+		Chance: 20,
+		Value:  4,
+	}, simulation.Event{
+		Chance: 5,
+		Value:  5,
+	}, simulation.Event{
+		Chance: 3,
+		Value:  6,
+	}, simulation.Event{
+		Chance: 50,
+		Value:  7,
+	}, simulation.Event{
+		Chance: 3,
+		Value:  8,
+	}, simulation.Event{
+		Chance: 20,
+		Value:  9,
+	},
+}
 
 // RiderStationReducer simulates the rider showing up at station
 func RiderStationReducer(dao simulation.EventDAO) redux.Reducer {
@@ -18,41 +80,42 @@ func RiderStationReducer(dao simulation.EventDAO) redux.Reducer {
 		switch action.Type {
 		case "RIDER_SHOWS_UP_STATION":
 			stations := state["stations"].([]simulation.Station)
+			logicalTime := action.Value.(int64)
+			simulatedTime := logicalTimeToRealTime(initialActualTime, actualDuration, logicalTime)
 			// 1. generate a list of riders on a station
-			newRiders := []simulation.Rider{}
-			// TODO: generate number of riders based on time
-			numOfRidersGenerated := rand.Intn(maxNumOfRidersGenerated)
+			numOfRidersGenerated := rand.Intn(getMaximumRiderBasedOnHour(simulatedTime.Hour()))
+			numOfRidersPerStation := make(map[int]int, numOfRidersGenerated)
 			for i := 0; i < numOfRidersGenerated; i++ {
-				newRiders = append(
-					newRiders,
-					simulation.Rider{
-						DestinationID: simulation.RandomItem(simulation.CastStationsToInterfaces(stations)).(simulation.Station).ID,
-					},
-				)
+				stationID := simulation.EventSimulation(stationIDsPercentage).(int)
+				numOfRidersPerStation[stationID]++
 			}
 			// 2. Based on station, we will give this rider into a random destination in the same line
 			lines := state["lines"].([]simulation.Line)
-			for _, rider := range newRiders {
+			for stationID, numberOfRiders := range numOfRidersPerStation {
 				linesRidersCanBe := simulation.LineFilter(lines, func(line simulation.Line) bool {
 					return simulation.StationsContains(line.Stations, func(station simulation.Station) bool {
-						return station.ID == rider.DestinationID
+						return station.ID == stationID
 					})
 				})
 				if len(linesRidersCanBe) == 0 {
-					log.Println("Rider doesn't belong to any line. Skipping.", rider)
+					log.Println("Rider doesn't belong to any line. Skipping.", stationID)
 					continue
 				}
-				lineToSendRiderTo := simulation.RandomItem(simulation.CastLinesToInterfaces(linesRidersCanBe)).(simulation.Line)
-				randomStationID := rider.DestinationID
-				for randomStationID == rider.DestinationID {
-					randomStationID = simulation.RandomItem(simulation.CastStationsToInterfaces(lineToSendRiderTo.Stations)).(simulation.Station).ID
-				}
-				for i := range stations {
-					if stations[i].ID == randomStationID {
-						stations[i].Riders = append(stations[i].Riders, rider)
-						log.Println("rider shows up at station", rider, stations[i])
-						if err := dao.StoreRiderEvent("ARRIVAL_STATION", stations[i].Name, lineToSendRiderTo.Name); err != nil {
-							log.Println("has issue updating rider event", err)
+				for r := 0; r < numberOfRiders; r++ {
+					lineToSendRiderTo := simulation.RandomItem(simulation.CastLinesToInterfaces(linesRidersCanBe)).(simulation.Line)
+					randomStationID := stationID
+					for randomStationID == stationID {
+						randomStationID = simulation.RandomItem(simulation.CastStationsToInterfaces(lineToSendRiderTo.Stations)).(simulation.Station).ID
+					}
+					rider := simulation.Rider{DestinationID: randomStationID}
+					for i := range stations {
+						if stations[i].ID == stationID {
+							stations[i].Riders = append(stations[i].Riders, rider)
+							log.Println("rider shows up at station", rider, stations[i])
+							if err := dao.StoreRiderEvent("ARRIVAL_STATION", stations[i].Name, lineToSendRiderTo.Name); err != nil {
+								log.Println("has issue updating rider event", err)
+							}
+							break
 						}
 					}
 				}
@@ -169,4 +232,16 @@ func PersistStateReducer(state redux.State, action redux.Action) redux.State {
 	default:
 		return state
 	}
+}
+
+// private helper method to convert logical time based on initial time and duration
+// IDEA: move this to ticker package
+func logicalTimeToRealTime(initialTime time.Time, duration time.Duration, logicalTime int64) time.Time {
+	return initialTime.Add(time.Duration(logicalTime) * duration)
+}
+
+func getMaximumRiderBasedOnHour(hour int) int {
+	// IDEA: would be better to replace this function as a math formula.
+	// I cant think of good math formula to distribute easily so I create a hard-coded map for now
+	return hourToRidersMapping[hour]
 }

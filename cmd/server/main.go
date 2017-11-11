@@ -22,6 +22,8 @@ import (
 )
 
 var db *sql.DB
+
+// IDEA: probably better ro move logical time toward Ticket package
 var logicalTime int64
 
 func init() {
