@@ -116,8 +116,12 @@ func Init(dao simulation.EventDAO, initState simulation.State) {
 				Name: "Orange",
 			},
 			simulation.Line{
-				Stations: []simulation.Station{stations["ELM_STATION"], stations["HOLLY_STATION"], stations["CEDAR_STATION"]},
-				Name:     "Banana",
+				Stations: []simulation.Station{
+					stations["ELM_STATION"],
+					stations["HOLLY_STATION"],
+					stations["CEDAR_STATION"],
+				},
+				Name: "Banana",
 			},
 		}
 		state["lines"] = lines
