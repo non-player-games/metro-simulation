@@ -9,6 +9,7 @@ import (
 
 	simulation "github.com/non-player-games/metro-simulation"
 	"github.com/rcliao/redux"
+	"github.com/twinj/uuid"
 )
 
 var initialActualTime = time.Date(2017, time.January, 1, 0, 0, 0, 0, time.Local)
@@ -107,11 +108,13 @@ func RiderStationReducer(dao simulation.EventDAO) redux.Reducer {
 					for randomStationID == stationID {
 						randomStationID = simulation.RandomItem(simulation.CastStationsToInterfaces(lineToSendRiderTo.Stations)).(simulation.Station).ID
 					}
-					rider := simulation.Rider{DestinationID: randomStationID}
+					rider := simulation.Rider{
+						ID:            string(uuid.NewV4()),
+						DestinationID: randomStationID,
+					}
 					for i := range stations {
 						if stations[i].ID == stationID {
 							stations[i].Riders = append(stations[i].Riders, rider)
-							log.Println("rider shows up at station", rider, stations[i])
 							if err := dao.StoreRiderEvent("ARRIVAL_STATION", stations[i].Name, lineToSendRiderTo.Name, simulatedTime); err != nil {
 								log.Println("has issue updating rider event", err)
 							}
@@ -181,10 +184,8 @@ func RiderTrainReducer(dao simulation.EventDAO) redux.Reducer {
 							stations[j].Riders = simulation.RiderFilter(
 								stations[j].Riders,
 								func(rider simulation.Rider) bool {
-									for _, destination := range train.GetDestinations() {
-										if rider.DestinationID == destination.ID {
-											return false
-										}
+									if rider.ID == onboardingRider.ID {
+										return false
 									}
 									return true
 								},

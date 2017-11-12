@@ -99,6 +99,7 @@ func CastLinesToInterfaces(lines []Line) []interface{} {
 
 // Rider represents a single rider with its detination
 type Rider struct {
+	ID            string
 	DestinationID int
 }
 
