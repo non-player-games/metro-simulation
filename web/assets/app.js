@@ -44,7 +44,7 @@
         state.stations.forEach(function(station) {
             var x = station.Location.X;
             var y = station.Location.Y;
-            drawCircle(ctx, getXScale(x), getYScale(y), stationRadius, 'pink', 'black', station.Name + ' (' + station.Riders.length + ')');
+            drawCircle(ctx, getXScale(x), getYScale(y), stationRadius, '#D32EA2', '#D32EA2', station.Name + ' (' + station.Riders.length + ')');
         });
         state.trains.forEach(function(train) {
             var x = train.CurrentStation.Location.X;
