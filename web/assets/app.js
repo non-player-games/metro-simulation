@@ -72,7 +72,7 @@
         ctx.strokeStyle = borderColor;
         ctx.stroke();
         ctx.font = '12px sans-serif';
-        ctx.fillStyle = 'black';
+        ctx.fillStyle = 'white';
         ctx.fillText(label, x + radius + 5, y + radius + 5);
     }
 
@@ -81,10 +81,10 @@
         ctx.fillStyle = color;
         ctx.fillRect(x, y, w, h);
         ctx.lineWidth = 2;
-        ctx.strokeStyle = 'black';
+        ctx.strokeStyle = 'white';
         ctx.strokeRect(x, y, w, h);
         ctx.fillStyle = color;
-        ctx.strokeStyle = 'black';
+        ctx.strokeStyle = 'white';
         ctx.font = 'bold 16px sans-serif';
         ctx.fillText(label, x, y - 20);
         ctx.strokeText(label, x, y, - 20);

@@ -23,6 +23,8 @@ clean:
 run: build
 	./$(BINARY_FOLDER)/$(BINARY_NAME)
 
+deploy: clean test build-linux
+	rsync -av . root@simulation.do:/opt/metro-simulation && ssh 'root@simulation.do' 'supervisorctl restart metro-simulation'
 
 build-linux:    ## Cross compilation
 	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 $(GOBUILD) -o $(BINARY_FOLDER)/$(BINARY_UNIX) -v $(MAIN_FILE)

@@ -2,6 +2,7 @@ package simulation
 
 import (
 	"math/rand"
+	"time"
 
 	"github.com/mohae/deepcopy"
 )
@@ -44,14 +45,16 @@ simulation package purely for abstract simulation logic like EventSimulation
 
 // EventDAO is to define the serialization interface
 type EventDAO interface {
-	StoreRiderEvent(action, stationName, lineName string) error
+	StoreRiderEvent(action, stationName, lineName string, actualTime time.Time) error
 }
 
 // State represents current application state
 type State struct {
-	Trains   []Train   `json:"trains"`
-	Stations []Station `json:"stations"`
-	Lines    []Line    `json:"lines"`
+	ActualTime time.Time `json:"currentTime"`
+	Counter    int64     `json:"counter"`
+	Trains     []Train   `json:"trains"`
+	Stations   []Station `json:"stations"`
+	Lines      []Line    `json:"lines"`
 }
 
 // Location represents the geo location of the object
@@ -96,6 +99,7 @@ func CastLinesToInterfaces(lines []Line) []interface{} {
 
 // Rider represents a single rider with its detination
 type Rider struct {
+	ID            string
 	DestinationID int
 }
 
@@ -175,6 +179,18 @@ func StationsFilter(stations []Station, fn func(station Station) bool) []Station
 		}
 	}
 	return vsf
+}
+
+// StationsFind finds first station meeting the fn criteria
+func StationsFind(stations []Station, fn func(station Station) bool) Station {
+	result := Station{}
+	for _, s := range stations {
+		if fn(s) {
+			result = s
+			break
+		}
+	}
+	return result
 }
 
 // StationsContains return boolean to indicate if any of the station meets the criteria of fn

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"html/template"
 	"net/http"
+	"time"
 
 	simulation "github.com/non-player-games/metro-simulation"
 	"github.com/non-player-games/metro-simulation/store"
@@ -12,6 +13,7 @@ import (
 
 // Homepage is DTO sending to homepage
 type Homepage struct {
+	Time     time.Time
 	Trains   []simulation.Train
 	Stations []simulation.Station
 	Lines    []simulation.Line
@@ -46,6 +48,7 @@ func Index() http.HandlerFunc {
 		}
 		state := store.Store.GetState()
 		dto := Homepage{
+			Time:     state["time"].(time.Time),
 			Trains:   state["trains"].([]simulation.Train),
 			Stations: state["stations"].([]simulation.Station),
 			Lines:    state["lines"].([]simulation.Line),
