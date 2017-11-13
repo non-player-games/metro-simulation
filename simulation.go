@@ -101,6 +101,7 @@ func CastLinesToInterfaces(lines []Line) []interface{} {
 type Rider struct {
 	ID            string
 	DestinationID int
+	WaitCounter   int
 }
 
 // RiderFilter applies filter function to a list of rider

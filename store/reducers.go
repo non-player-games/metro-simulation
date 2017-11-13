@@ -74,6 +74,7 @@ var stationIDsPercentage = []simulation.Event{
 		Value:  9,
 	},
 }
+var maximumWaitCounter = 2
 
 // RiderStationReducer simulates the rider showing up at station
 func RiderStationReducer(dao simulation.EventDAO) redux.Reducer {
@@ -111,6 +112,7 @@ func RiderStationReducer(dao simulation.EventDAO) redux.Reducer {
 					rider := simulation.Rider{
 						ID:            string(uuid.NewV4()),
 						DestinationID: randomStationID,
+						WaitCounter:   0,
 					}
 					for i := range stations {
 						if stations[i].ID == stationID {
@@ -163,10 +165,16 @@ func RiderTrainReducer(dao simulation.EventDAO) redux.Reducer {
 				for j, station := range stations {
 					if train.CurrentStation.ID == station.ID {
 						onboardingRiders := []simulation.Rider{}
-						for _, rider := range station.Riders {
+						leavingRiders := []simulation.Rider{}
+
+						for k, rider := range station.Riders {
 							for _, destination := range train.GetDestinations() {
 								if destination.ID == rider.DestinationID {
+									if station.Riders[k].WaitCounter > maximumWaitCounter {
+										leavingRiders = append(leavingRiders, station.Riders[k])
+									}
 									if len(train.Riders)+len(onboardingRiders) >= train.Capacity {
+										station.Riders[k].WaitCounter++
 										if err := dao.StoreRiderEvent("TRAIN_FULL", station.Name, train.Line.Name, simulatedTime); err != nil {
 											log.Println("failed to insert train full event", err)
 										}
@@ -178,6 +186,20 @@ func RiderTrainReducer(dao simulation.EventDAO) redux.Reducer {
 									}
 								}
 							}
+						}
+						for _, leavingRider := range leavingRiders {
+							if err := dao.StoreRiderEvent("RIDER_LEAVE", station.Name, train.Line.Name, simulatedTime); err != nil {
+								log.Println("failed to insert rider leave event", err)
+							}
+							stations[j].Riders = simulation.RiderFilter(
+								stations[j].Riders,
+								func(rider simulation.Rider) bool {
+									if rider.ID == leavingRider.ID {
+										return false
+									}
+									return true
+								},
+							)
 						}
 						for _, onboardingRider := range onboardingRiders {
 							trains[i].Riders = append(trains[i].Riders, onboardingRider)
