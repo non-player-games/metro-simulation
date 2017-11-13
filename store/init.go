@@ -136,7 +136,7 @@ func Init(dao simulation.EventDAO, initState simulation.State) {
 				CurrentStation: line.Stations[0],
 				Line:           line,
 				Riders:         []simulation.Rider{},
-				Capacity:       10,
+				Capacity:       100,
 				Direction:      true,
 			})
 		}
