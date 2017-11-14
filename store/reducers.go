@@ -117,7 +117,7 @@ func RiderStationReducer(dao simulation.EventDAO) redux.Reducer {
 					for i := range stations {
 						if stations[i].ID == stationID {
 							stations[i].Riders = append(stations[i].Riders, rider)
-							if err := dao.StoreRiderEvent("ARRIVAL_STATION", stations[i].Name, lineToSendRiderTo.Name, simulatedTime); err != nil {
+							if err := dao.StoreRiderEvent("RIDER_ARRIVAL_STATION", stations[i].Name, lineToSendRiderTo.Name, simulatedTime); err != nil {
 								log.Println("has issue updating rider event", err)
 							}
 							break
@@ -181,14 +181,14 @@ func RiderTrainReducer(dao simulation.EventDAO) redux.Reducer {
 										continue
 									}
 									onboardingRiders = append(onboardingRiders, rider)
-									if err := dao.StoreRiderEvent("ARRIVAL_TRAIN", station.Name, train.Line.Name, simulatedTime); err != nil {
+									if err := dao.StoreRiderEvent("RIDER_ARRIVAL_TRAIN", station.Name, train.Line.Name, simulatedTime); err != nil {
 										log.Println("failed to insert arrival train event", err)
 									}
 								}
 							}
 						}
 						for _, leavingRider := range leavingRiders {
-							if err := dao.StoreRiderEvent("RIDER_LEAVE", station.Name, train.Line.Name, simulatedTime); err != nil {
+							if err := dao.StoreRiderEvent("RIDER_LEAVE_STATION", station.Name, train.Line.Name, simulatedTime); err != nil {
 								log.Println("failed to insert rider leave event", err)
 							}
 							stations[j].Riders = simulation.RiderFilter(
@@ -223,7 +223,7 @@ func RiderTrainReducer(dao simulation.EventDAO) redux.Reducer {
 			trains := state["trains"].([]simulation.Train)
 			for i := range trains {
 				for _ = range trains[i].Riders {
-					if err := dao.StoreRiderEvent("DEPARTURE_TRAIN", trains[i].CurrentStation.Name, trains[i].Line.Name, simulatedTime); err != nil {
+					if err := dao.StoreRiderEvent("RIDER_DEPARTURE_TRAIN", trains[i].CurrentStation.Name, trains[i].Line.Name, simulatedTime); err != nil {
 						log.Println("failed to insert departure train event", err)
 					}
 				}
